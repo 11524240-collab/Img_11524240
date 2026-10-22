@@ -1,14 +1,3 @@
-// Copyright (c) 2019 ml5
-//
-// This software is released under the MIT License.
-// https://opensource.org/licenses/MIT
-
-/* ===
-ml5 Example
-Webcam Image Classification using a pre-trained customized model and p5.js
-This example uses p5 preload function to create the classifier
-=== */
-
 // Classifier Variable
 let classifier;
 // Model URL
@@ -28,36 +17,50 @@ function preload() {
 function setup() {
   createCanvas(320, 320);
   // Create the video
-    var constraints = {
+  var constraints = {
     audio: false,
     video: {
-      facingMode: "environment" // 優先使用後置鏡頭，若不支援會自動切換前置，不會報錯中斷
+      facingMode: "environment" 
     }
   };
 
   video = createCapture(constraints);
   video.size(320, 320);
   video.hide();
-  flippedVideo = ml5.flipImage(video)
+  
+  // 🔴 刪除了原本在這裡會導致報錯的 flippedVideo = ml5.flipImage(video)
+  
   // Start classifying
   classifyVideo();
 }
 
 function draw() {
   background(0);
-  // Draw the video
-  image(flippedVideo, 0, 0);
+  
+  // 🟢 加上判斷式：確保鏡頭影像處理好之後才畫出來
+  if (flippedVideo) {
+    image(flippedVideo, 0, 0);
+  }
+  
   // Draw the label
   fill(255);
   textSize(16);
   textAlign(CENTER);
   text(label, width / 2, height - 4);
 }
+
 // Get a prediction for the current video frame
 function classifyVideo() {
-  flippedVideo = ml5.flipImage(video)
-  classifier.classify(flippedVideo, gotResult);
+  // 🟢 檢查 video 是否已經加載完成（寬度大於0），避免提早翻轉發生錯誤
+  if (video.width > 0) {
+    flippedVideo = ml5.flipImage(video);
+    classifier.classify(flippedVideo, gotResult);
+  } else {
+    // 如果還沒準備好，100毫秒後再試一次
+    setTimeout(classifyVideo, 100);
+  }
 }
+
 // When we get a result
 function gotResult(error, results) {
   // If there is an error
@@ -66,7 +69,7 @@ function gotResult(error, results) {
     return;
   }
   // The results are in an array ordered by confidence.
-  // console.log(results[0]);
   label = results[0].label;
   // Classifiy again!
   classifyVideo();
+}
