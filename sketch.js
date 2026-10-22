@@ -31,13 +31,8 @@ function setup() {
     var constraints = {
     audio: false,
     video: {
-      facingMode: {
-        exact: "environment"
-      }
-    }   
-    //video: {
-      //facingMode: "user"
-    //}
+      facingMode: "environment" // 優先使用後置鏡頭，若不支援會自動切換前置，不會報錯中斷
+    }
   };
 
   video = createCapture(constraints);
