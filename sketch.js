@@ -13,60 +13,35 @@ This example uses p5 preload function to create the classifier
 let classifier;
 // Model URL
 let imageModelURL = 'https://11524240-collab.github.io/Img_11524240/';
-
 // Video
 let video;
 let flippedVideo;
 // To store the classification
 let label = "";
-
 // Load the model first
 function preload() {
   classifier = ml5.imageClassifier(imageModelURL + 'model.json');
 }
-
 function setup() {
-
   createCanvas(320, 320);
-
-  
-
   // Create the video
-
     var constraints = {
-
     audio: false,
-
     video: {
-
       facingMode: {
-
         exact: "environment"
-
       }
-
-    }   
-
-   video: {
-
+  }   
+  video: {
       facingMode: "user"
-
     }
-
   };
-
   video = createCapture(constraints);
-
   video.size(320, 320);
-
   video.hide();
-
   flippedVideo = ml5.flipImage(video)
-
   //Start classifying
-
   classifyVideo();
-
 }
 
 function draw() {
